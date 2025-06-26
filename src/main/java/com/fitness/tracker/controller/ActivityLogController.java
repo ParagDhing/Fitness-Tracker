@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fitness.tracker.model.ActivityLog;
-import com.fitness.tracker.service.ActivityLogService;
+import com.fitness.tracker.service.impl.ActivityLogServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -21,9 +21,9 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/activity-logs")
 public class ActivityLogController {
 
-    private final ActivityLogService activityLogService;
+    private final ActivityLogServiceImpl activityLogService;
 
-    public ActivityLogController(ActivityLogService activityLogService) {
+    public ActivityLogController(ActivityLogServiceImpl activityLogService) {
         this.activityLogService = activityLogService;
     }
 

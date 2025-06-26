@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fitness.tracker.model.WorkoutPlan;
-import com.fitness.tracker.service.WorkoutPlanService;
+import com.fitness.tracker.service.impl.WorkoutPlanServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -21,9 +21,9 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/workout-plans")
 public class WorkoutPlanController {
 
-    private final WorkoutPlanService workoutPlanService;
+    private final WorkoutPlanServiceImpl workoutPlanService;
 
-    public WorkoutPlanController(WorkoutPlanService workoutPlanService) {
+    public WorkoutPlanController(WorkoutPlanServiceImpl workoutPlanService) {
         this.workoutPlanService = workoutPlanService;
     }
 
