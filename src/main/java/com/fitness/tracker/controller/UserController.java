@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fitness.tracker.dto.UserDto;
 import com.fitness.tracker.model.User;
-import com.fitness.tracker.service.UserService;
+import com.fitness.tracker.service.impl.UserServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -21,14 +22,14 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
-    public UserController(UserService userService) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody UserDto user) {
         return ResponseEntity.ok(userService.create(user));
     }
 
@@ -43,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @Valid @RequestBody User user) {
+    public User update(@PathVariable Long id, @Valid @RequestBody UserDto user) {
         return userService.update(id, user);
     }
 

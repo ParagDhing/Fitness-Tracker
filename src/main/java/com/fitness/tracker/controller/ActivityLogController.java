@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fitness.tracker.dto.ActivityLogDto;
 import com.fitness.tracker.model.ActivityLog;
-import com.fitness.tracker.service.ActivityLogService;
+import com.fitness.tracker.service.impl.ActivityLogServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -21,14 +22,14 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/activity-logs")
 public class ActivityLogController {
 
-    private final ActivityLogService activityLogService;
+    private final ActivityLogServiceImpl activityLogService;
 
-    public ActivityLogController(ActivityLogService activityLogService) {
+    public ActivityLogController(ActivityLogServiceImpl activityLogService) {
         this.activityLogService = activityLogService;
     }
 
     @PostMapping
-    public ResponseEntity<ActivityLog> create(@Valid @RequestBody ActivityLog log) {
+    public ResponseEntity<ActivityLog> create(@Valid @RequestBody ActivityLogDto log) {
         return ResponseEntity.ok(activityLogService.create(log));
     }
 
@@ -43,7 +44,7 @@ public class ActivityLogController {
     }
 
     @PutMapping("/{id}")
-    public ActivityLog update(@PathVariable Long id, @Valid @RequestBody ActivityLog log) {
+    public ActivityLog update(@PathVariable Long id, @Valid @RequestBody ActivityLogDto log) {
         return activityLogService.update(id, log);
     }
 

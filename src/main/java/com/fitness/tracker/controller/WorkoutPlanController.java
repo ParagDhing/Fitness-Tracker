@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fitness.tracker.dto.WorkoutPlanDto;
 import com.fitness.tracker.model.WorkoutPlan;
-import com.fitness.tracker.service.WorkoutPlanService;
+import com.fitness.tracker.service.impl.WorkoutPlanServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -21,14 +22,14 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/workout-plans")
 public class WorkoutPlanController {
 
-    private final WorkoutPlanService workoutPlanService;
+    private final WorkoutPlanServiceImpl workoutPlanService;
 
-    public WorkoutPlanController(WorkoutPlanService workoutPlanService) {
+    public WorkoutPlanController(WorkoutPlanServiceImpl workoutPlanService) {
         this.workoutPlanService = workoutPlanService;
     }
 
     @PostMapping
-    public ResponseEntity<WorkoutPlan> create(@Valid @RequestBody WorkoutPlan plan) {
+    public ResponseEntity<WorkoutPlan> create(@Valid @RequestBody WorkoutPlanDto plan) {
         return ResponseEntity.ok(workoutPlanService.create(plan));
     }
 
@@ -43,7 +44,7 @@ public class WorkoutPlanController {
     }
 
     @PutMapping("/{id}")
-    public WorkoutPlan update(@PathVariable Long id, @Valid @RequestBody WorkoutPlan plan) {
+    public WorkoutPlan update(@PathVariable Long id, @Valid @RequestBody WorkoutPlanDto plan) {
         return workoutPlanService.update(id, plan);
     }
 

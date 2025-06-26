@@ -2,58 +2,14 @@ package com.fitness.tracker.service;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
+import com.fitness.tracker.dto.UserDto;
 import com.fitness.tracker.model.User;
-import com.fitness.tracker.model.WorkoutPlan;
-import com.fitness.tracker.repository.UserRepository;
-import com.fitness.tracker.repository.WorkoutPlanRepository;
 
-import jakarta.persistence.EntityNotFoundException;
+public interface UserService {
 
-@Service
-public class UserService {
-
-    private final UserRepository userRepository;
-    private final WorkoutPlanRepository workoutPlanRepository;
-
-    public UserService(UserRepository userRepository, WorkoutPlanRepository workoutPlanRepository) {
-        this.userRepository = userRepository;
-		this.workoutPlanRepository = workoutPlanRepository;
-    }
-
-    public User create(User user) {
-    	if(user.getWorkoutPlan() == null) {
-    		WorkoutPlan workoutPlan = workoutPlanRepository.findFirstByOrderByIdAsc()
-    				.orElseThrow(() -> new EntityNotFoundException("Workout plan not found, please create a workout plan and try again"));
-    		user.setWorkoutPlan(workoutPlan);
-    		
-    	}else {
-    		workoutPlanRepository.save(user.getWorkoutPlan());
-    	}
-        return userRepository.save(user);
-    }
-
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
-
-    public User getById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-    }
-
-    public User update(Long id, User updatedUser) {
-        User user = getById(id);
-        user.setName(updatedUser.getName());
-        user.setEmail(updatedUser.getEmail());
-        user.setAge(updatedUser.getAge());
-        return userRepository.save(user);
-    }
-
-    public void delete(Long id) {
-        userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        userRepository.deleteById(id);
-    }
+    User create(UserDto user);
+    List<User> getAll();
+    User getById(Long id);
+    User update(Long id, UserDto user);
+    void delete(Long id);
 }
