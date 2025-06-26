@@ -16,6 +16,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fitness.tracker.dto.UserDto;
 import com.fitness.tracker.model.User;
 import com.fitness.tracker.model.WorkoutPlan;
 import com.fitness.tracker.repository.UserRepository;
@@ -45,34 +46,39 @@ public class UserServiceTest {
 
         when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(workoutPlan));
 
-        User user = new User();
-        user.setName("John Doe");
-        user.setEmail("john@example.com");
-        user.setAge(25);
+        UserDto userDto = new UserDto();
+        userDto.setName("John Doe");
+        userDto.setEmail("john@example.com");
+        userDto.setAge(25);
+        userDto.setWorkoutPlan(workoutPlan); // or just set ID and resolve in service
+
+        User user = userDto.castToUser();
         user.setWorkoutPlan(workoutPlan);
 
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User created = userService.create(user);
+        User created = userService.create(userDto);
 
         assertNotNull(created);
         assertEquals("John Doe", created.getName());
         assertEquals("Beginner Plan", created.getWorkoutPlan().getName());
-        verify(userRepository, times(1)).save(user);
+
+        verify(userRepository, times(1)).save(any(User.class));
     }
+
 
     @Test
     void testCreateUserWithoutWorkoutPlanShouldFail() {
         when(workoutPlanRepository.findFirstByOrderByIdAsc()).thenReturn(Optional.empty());
 
-        User user = new User();
-        user.setName("Jane Doe");
-        user.setEmail("jane@example.com");
-        user.setAge(28);
-        user.setWorkoutPlan(null); // no plan provided
+        UserDto userDto = new UserDto();
+        userDto.setName("Jane Doe");
+        userDto.setEmail("jane@example.com");
+        userDto.setAge(28);
+        userDto.setWorkoutPlan(null); // no plan provided
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> {
-            userService.create(user);
+            userService.create(userDto);
         });
 
         assertEquals("Workout plan not found, please create a workout plan and try again", ex.getMessage());
@@ -122,15 +128,15 @@ public class UserServiceTest {
         original.setEmail("old@example.com");
         original.setAge(30);
 
-        User updated = new User();
-        updated.setName("New");
-        updated.setEmail("new@example.com");
-        updated.setAge(35);
+        UserDto userDto = new UserDto();
+        userDto.setName("New");
+        userDto.setEmail("new@example.com");
+        userDto.setAge(35);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(original));
         when(userRepository.save(any())).thenReturn(original);
 
-        User result = userService.update(1L, updated);
+        User result = userService.update(1L, userDto);
 
         assertEquals("New", result.getName());
         assertEquals("new@example.com", result.getEmail());

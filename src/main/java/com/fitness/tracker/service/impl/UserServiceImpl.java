@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.fitness.tracker.dto.UserDto;
 import com.fitness.tracker.model.User;
 import com.fitness.tracker.model.WorkoutPlan;
 import com.fitness.tracker.repository.UserRepository;
@@ -23,7 +24,8 @@ public class UserServiceImpl implements UserService{
 		this.workoutPlanRepository = workoutPlanRepository;
     }
 
-    public User create(User user) {
+    public User create(UserDto userDto) {
+    	User user = userDto.castToUser();
     	if(user.getWorkoutPlan() == null) {
     		WorkoutPlan workoutPlan = workoutPlanRepository.findFirstByOrderByIdAsc()
     				.orElseThrow(() -> new EntityNotFoundException("Workout plan not found, please create a workout plan and try again"));
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService{
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    public User update(Long id, User updatedUser) {
+    public User update(Long id, UserDto updatedUser) {
         User user = getById(id);
         user.setName(updatedUser.getName());
         user.setEmail(updatedUser.getEmail());

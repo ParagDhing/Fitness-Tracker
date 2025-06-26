@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.fitness.tracker.dto.WorkoutPlanDto;
 import com.fitness.tracker.model.WorkoutPlan;
 import com.fitness.tracker.repository.WorkoutPlanRepository;
 import com.fitness.tracker.service.WorkoutPlanService;
@@ -19,8 +20,9 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService{
         this.workoutPlanRepository = workoutPlanRepository;
     }
 
-    public WorkoutPlan create(WorkoutPlan plan) {
-        return workoutPlanRepository.save(plan);
+    public WorkoutPlan create(WorkoutPlanDto workoutPlanDto) {
+    	WorkoutPlan workoutPlan = workoutPlanDto.castToWorkoutPlan();
+        return workoutPlanRepository.save(workoutPlan);
     }
 
     public List<WorkoutPlan> getAll() {
@@ -32,7 +34,7 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService{
                 .orElseThrow(() -> new EntityNotFoundException("Workout plan not found"));
     }
 
-    public WorkoutPlan update(Long id, WorkoutPlan updatedPlan) {
+    public WorkoutPlan update(Long id, WorkoutPlanDto updatedPlan) {
         WorkoutPlan plan = getById(id);
         plan.setName(updatedPlan.getName());
         plan.setDescription(updatedPlan.getDescription());

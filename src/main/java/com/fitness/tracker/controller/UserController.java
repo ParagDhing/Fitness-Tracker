@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fitness.tracker.dto.UserDto;
 import com.fitness.tracker.model.User;
 import com.fitness.tracker.service.impl.UserServiceImpl;
 
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody UserDto user) {
         return ResponseEntity.ok(userService.create(user));
     }
 
@@ -43,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @Valid @RequestBody User user) {
+    public User update(@PathVariable Long id, @Valid @RequestBody UserDto user) {
         return userService.update(id, user);
     }
 

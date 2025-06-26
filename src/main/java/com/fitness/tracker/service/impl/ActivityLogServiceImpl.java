@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.fitness.tracker.dto.ActivityLogDto;
 import com.fitness.tracker.model.ActivityLog;
 import com.fitness.tracker.repository.ActivityLogRepository;
 import com.fitness.tracker.service.ActivityLogService;
@@ -19,8 +20,9 @@ public class ActivityLogServiceImpl implements ActivityLogService{
         this.activityLogRepository = activityLogRepository;
     }
 
-    public ActivityLog create(ActivityLog log) {
-        return activityLogRepository.save(log);
+    public ActivityLog create(ActivityLogDto activityLogDto) {
+    	ActivityLog activityLog = activityLogDto.castToActivityLog();
+        return activityLogRepository.save(activityLog);
     }
 
     public List<ActivityLog> getAll() {
@@ -32,7 +34,7 @@ public class ActivityLogServiceImpl implements ActivityLogService{
                 .orElseThrow(() -> new EntityNotFoundException("Activity log not found"));
     }
 
-    public ActivityLog update(Long id, ActivityLog updatedLog) {
+    public ActivityLog update(Long id, ActivityLogDto updatedLog) {
         ActivityLog log = getById(id);
         log.setDate(updatedLog.getDate());
         log.setActivity(updatedLog.getActivity());

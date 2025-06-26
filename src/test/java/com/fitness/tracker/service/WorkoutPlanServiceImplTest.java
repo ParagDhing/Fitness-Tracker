@@ -16,6 +16,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fitness.tracker.dto.WorkoutPlanDto;
 import com.fitness.tracker.model.WorkoutPlan;
 import com.fitness.tracker.repository.WorkoutPlanRepository;
 import com.fitness.tracker.service.impl.WorkoutPlanServiceImpl;
@@ -35,14 +36,17 @@ class WorkoutPlanServiceImplTest {
 
     @Test
     void testCreate() {
-        WorkoutPlan plan = new WorkoutPlan();
-        plan.setName("Plan A");
+        WorkoutPlanDto workoutPlanDto = new WorkoutPlanDto();
+        workoutPlanDto.setName("Plan A");
+        
+        WorkoutPlan workoutPlan = workoutPlanDto.castToWorkoutPlan();
 
-        when(workoutPlanRepository.save(plan)).thenReturn(plan);
+        when(workoutPlanRepository.save(any(WorkoutPlan.class))).thenReturn(workoutPlan);
 
-        WorkoutPlan created = workoutPlanService.create(plan);
+
+        WorkoutPlan created = workoutPlanService.create(workoutPlanDto);
         assertEquals("Plan A", created.getName());
-        verify(workoutPlanRepository, times(1)).save(plan);
+        verify(workoutPlanRepository, times(1)).save(any(WorkoutPlan.class));
     }
 
     @Test
@@ -81,14 +85,14 @@ class WorkoutPlanServiceImplTest {
         existing.setName("Old Plan");
         existing.setDescription("Old Description");
 
-        WorkoutPlan updated = new WorkoutPlan();
-        updated.setName("New Plan");
-        updated.setDescription("New Description");
+        WorkoutPlanDto workoutPlanDto = new WorkoutPlanDto();
+        workoutPlanDto.setName("New Plan");
+        workoutPlanDto.setDescription("New Description");
 
         when(workoutPlanRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(workoutPlanRepository.save(any())).thenReturn(existing);
 
-        WorkoutPlan result = workoutPlanService.update(1L, updated);
+        WorkoutPlan result = workoutPlanService.update(1L, workoutPlanDto);
 
         assertEquals("New Plan", result.getName());
         assertEquals("New Description", result.getDescription());

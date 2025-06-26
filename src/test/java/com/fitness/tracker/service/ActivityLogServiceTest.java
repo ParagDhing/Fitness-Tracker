@@ -1,21 +1,29 @@
 package com.fitness.tracker.service;
 
-import com.fitness.tracker.model.ActivityLog;
-import com.fitness.tracker.model.User;
-import com.fitness.tracker.model.WorkoutPlan;
-import com.fitness.tracker.repository.ActivityLogRepository;
-import com.fitness.tracker.service.impl.ActivityLogServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.fitness.tracker.dto.ActivityLogDto;
+import com.fitness.tracker.model.ActivityLog;
+import com.fitness.tracker.model.User;
+import com.fitness.tracker.model.WorkoutPlan;
+import com.fitness.tracker.repository.ActivityLogRepository;
+import com.fitness.tracker.service.impl.ActivityLogServiceImpl;
+
+import jakarta.persistence.EntityNotFoundException;
 
 class ActivityLogServiceTest {
 
@@ -30,16 +38,17 @@ class ActivityLogServiceTest {
 
     @Test
     void testCreateActivityLog() {
-        ActivityLog log = new ActivityLog();
-        log.setActivity("Running");
+        ActivityLogDto activityLogDto = new ActivityLogDto();
+        activityLogDto.setActivity("Running");
+        ActivityLog activityLog = activityLogDto.castToActivityLog();
 
-        when(activityLogRepository.save(log)).thenReturn(log);
+        when(activityLogRepository.save(any(ActivityLog.class))).thenReturn(activityLog);
 
-        ActivityLog created = activityLogService.create(log);
+        ActivityLog created = activityLogService.create(activityLogDto);
 
         assertNotNull(created);
         assertEquals("Running", created.getActivity());
-        verify(activityLogRepository).save(log);
+        verify(activityLogRepository).save(any(ActivityLog.class));
     }
 
     @Test
@@ -81,31 +90,46 @@ class ActivityLogServiceTest {
 
     @Test
     void testUpdateActivityLog() {
+        // Existing entity from DB
         ActivityLog existing = new ActivityLog();
         existing.setId(1L);
         existing.setActivity("Old");
         existing.setDurationInMinutes(30);
         existing.setDate(LocalDate.now());
 
-        ActivityLog updated = new ActivityLog();
-        updated.setActivity("New");
-        updated.setDurationInMinutes(45);
-        updated.setDate(LocalDate.now().plusDays(1));
+        // Simulate input DTO (e.g., from controller)
+        ActivityLogDto dto = new ActivityLogDto();
+        dto.setActivity("New");
+        dto.setDurationInMinutes(45);
+        dto.setDate(LocalDate.now().plusDays(1));
 
-        User user = new User(); user.setName("Test User");
-        WorkoutPlan plan = new WorkoutPlan(); plan.setName("Plan A");
-        updated.setUser(user);
-        updated.setWorkoutPlan(plan);
+        // Mock user and workout plan (assume they are required in cast)
+        User user = new User();
+        user.setName("Test User");
 
+        WorkoutPlan plan = new WorkoutPlan();
+        plan.setName("Plan A");
+
+        dto.setUser(user);
+        dto.setWorkoutPlan(plan);
+
+        // Convert DTO to ActivityLog (mimicking castToActivityLog)
+        ActivityLog updated = dto.castToActivityLog();
+
+        // Mock repository
         when(activityLogRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(activityLogRepository.save(existing)).thenReturn(existing);
 
-        ActivityLog result = activityLogService.update(1L, updated);
+        // Call update logic
+        ActivityLog result = activityLogService.update(1L, dto);
 
+        // Verify values are updated
         assertEquals("New", result.getActivity());
         assertEquals(45, result.getDurationInMinutes());
         assertEquals("Test User", result.getUser().getName());
+        assertEquals("Plan A", result.getWorkoutPlan().getName());
     }
+
 
     @Test
     void testDeleteActivityLog() {
