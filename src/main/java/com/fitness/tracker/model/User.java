@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class User {
@@ -20,6 +21,17 @@ public class User {
     private String email;
 
     private int age;
+    
+    @OneToOne
+    private WorkoutPlan workoutPlan;
+
+	public WorkoutPlan getWorkoutPlan() {
+		return workoutPlan;
+	}
+
+	public void setWorkoutPlan(WorkoutPlan workoutPlan) {
+		this.workoutPlan = workoutPlan;
+	}
 
 	public Long getId() {
 		return id;

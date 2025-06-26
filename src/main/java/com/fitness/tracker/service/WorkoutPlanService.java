@@ -35,7 +35,6 @@ public class WorkoutPlanService {
         WorkoutPlan plan = getById(id);
         plan.setName(updatedPlan.getName());
         plan.setDescription(updatedPlan.getDescription());
-        plan.setUser(updatedPlan.getUser());
         return workoutPlanRepository.save(plan);
     }
 

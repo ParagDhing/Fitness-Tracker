@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.fitness.tracker.model.User;
+import com.fitness.tracker.model.WorkoutPlan;
 import com.fitness.tracker.repository.UserRepository;
+import com.fitness.tracker.repository.WorkoutPlanRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -13,12 +15,22 @@ import jakarta.persistence.EntityNotFoundException;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final WorkoutPlanRepository workoutPlanRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, WorkoutPlanRepository workoutPlanRepository) {
         this.userRepository = userRepository;
+		this.workoutPlanRepository = workoutPlanRepository;
     }
 
     public User create(User user) {
+    	if(user.getWorkoutPlan() == null) {
+    		WorkoutPlan workoutPlan = workoutPlanRepository.findFirstByOrderByIdAsc()
+    				.orElseThrow(() -> new EntityNotFoundException("Workout plan not found, please create a workout plan and try again"));
+    		user.setWorkoutPlan(workoutPlan);
+    		
+    	}else {
+    		workoutPlanRepository.save(user.getWorkoutPlan());
+    	}
         return userRepository.save(user);
     }
 
